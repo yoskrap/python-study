@@ -1,8 +1,13 @@
+# BFS 너비우선탐색
+# 0: 길, 1: 벽
+# 최단 경로 구하기 -> 한 개 까지 벽을 부수고 이동하기 가능
+# 0이면 바로 이동 가능, 1이면 벽을 부쉈는지, 안부쉈는지 확인하고 이동
+
 import sys
 from collections import deque
 input = sys.stdin.readline
 
-m, n = map(int, input().split())
+n, m = map(int, input().split())
 matrix = [list(map(int, input().split())) for _ in range(m)]
 '''
 [
@@ -14,30 +19,36 @@ matrix = [list(map(int, input().split())) for _ in range(m)]
     [0,0,0,0]
 ]
 '''
-count = 0
-queue = deque()
+visited = [[[0] * 2 for _ in range(m)] for _ in range(n)] # 각 좌표에 [0],[0]을 붙여놨음
+'''
+[
+    [[1,0], [0,0], [0,0], [0,0]],
+    [[0,0], [0,0], [0,0], [0,0]],
+    [[0,0], [0,0], [0,0], [0,0]],
+    [[0,0], [0,0], [0,0], [0,0]],
+    [[0,0], [0,0], [0,0], [0,0]],
+    [[0,0], [0,0], [0,0], [0,0]]
+]
+'''
 
-for i in range(m):
-    for j in range(n):
-        if matrix[i][j] == 0:
-            queue.append((i, j))
+def bfs():
+    queue = deque([(0, 0, 0)]) # (x, y, 0:벽 안부순 상태 or 1:벽 부순 상태)
+    visited[0][0][0] = 1 # 거리 1부터 시작
 
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
+    dx = [0, 0, -1, 1]
+    dy = [1, -1, 0, 0]
 
-def dfs(i, j):
     while queue:
-        x, y = queue.popleft()
-        for i in range(4):
-            nx = dx[i] + x
-            ny = dy[i] + y
-        if 0 <= nx < m and 0 <= ny < n:
-            if matrix[nx][ny] == 1:
-                while True:
-                    
-                matrix[nx][ny] = 0
-for i in range(0, m):
-    for j in range(0, n):
-        if matrix[i][j] == 0:
-            dfs(i, j)
-            count += 1
+        x, y, broken = queue.popleft() # (0, 0, 0)
+        if x == n - 1 and y == m -1:
+            return matrix[x][y][broken]
+        else:
+            for i in range(4):
+                nx = x + dx[i]
+                ny = y + dy[i]
+
+                if 0 <= nx < n and 0 <= ny < m:
+                    if matrix[nx][ny] == 0 and visited[nx][ny][broken] == 0:
+                        # 벽이 없으면서 과거에 
+                        visited[nx][ny][broken] = visited[x][y][broken] + 1
+                        queue.append((nx, ny, broken))
