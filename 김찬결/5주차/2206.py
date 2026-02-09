@@ -49,6 +49,8 @@ def bfs():
 
                 if 0 <= nx < n and 0 <= ny < m:
                     if matrix[nx][ny] == 0 and visited[nx][ny][broken] == 0:
-                        # 벽이 없으면서 과거에 
+                        # 벽이 없으면서 과거에 아무도 이 칸에 도착한 적이 없다면
                         visited[nx][ny][broken] = visited[x][y][broken] + 1
+                        # 이동했다고 생각하며 거리 +1추가
                         queue.append((nx, ny, broken))
+                    elif matrix[nx][ny] == 1 and broken == 0:
